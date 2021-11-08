@@ -1,5 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const TodoList = require('./models/todo')
+const cors = require('cors')
+
+app.use(cors())
 
 const todo_lists = [
   {
@@ -40,16 +45,19 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/todos', (request, response) => {
-  response.json(todo_lists)
+  TodoList.find({}).then(todoLists => {
+    response.json(todoLists)
+  })
 })
 
 app.get('/api/todos/:list', (request, response) => {
-  const list_name = request.params.list
-  const list = todo_lists.find(list => list.name == list_name)
-  response.json(list)
+  const listName = request.params.list
+  TodoList.find({ name: listName }).then(todoList => {
+    response.json(todoList)
+  })
 })
 
-const PORT = 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Listening port ${PORT}`)
 })
