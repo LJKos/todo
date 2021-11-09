@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const SidePanelView = ({ lists }) => {
   if (!lists) {
@@ -13,7 +14,9 @@ const SidePanelView = ({ lists }) => {
     <div>
       <button>add list</button>
       <ul>
-        {lists.map(list => <li key={list.name}>{list.name}</li>)}
+        {lists.map(list => <li key={list.id}>
+          <Link to={`/${list.name}`}>{list.name}</Link>
+        </li>)}
       </ul>
     </div>
   )
