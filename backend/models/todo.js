@@ -1,15 +1,5 @@
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI
-
-mongoose.connect(url)
-  .then(result => {
-    console.log('successful MongoDB connection')
-  })
-  .catch((error) => {
-    console.log('failed MongoDB connection:', error.message)
-  })
-
 const todoSchema = new mongoose.Schema({
   deadline: Date,
   name: String,

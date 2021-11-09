@@ -1,0 +1,25 @@
+const config = require('./utils/config')
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const todosRouter = require('./controllers/todos')
+const middleware = require('./utils/middleware')
+const mongoose = require('mongoose')
+
+mongoose.connect(config.MONGODB_URI)
+  .then(result => {
+    console.log('successful MongoDB connection')
+  })
+  .catch((error) => {
+    console.log('failed MongoDB connection:', error.message)
+  })
+
+app.use(cors())
+app.use(express.static('build'))
+app.use(express.json())
+
+app.use('/api/todos', todosRouter)
+
+app.use(middleware.unknownEndpoint)
+
+module.exports = app
