@@ -1,26 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const DefaultView = () => {
+const DefaultView = ({ addList }) => {
+  const [name, setName] = useState('')
+
+  const handleAddList = (event) => {
+    event.preventDefault()
+
+    addList(name)
+    setName('')
+  }
+
   return (
     <div>
-      <h3>Log in</h3>
-      <p>Log in to use todo lists</p>
-      <form>
-        <div>username</div>
-        <div>password</div>
-        <button>log in</button>
+      <h3>Add list</h3>
+      <form onSubmit={handleAddList}>
+        <div>
+            list name
+            <input
+            type='text'
+            value={name}
+            name='name'
+            onChange={({ target }) => setName(target.value)} />
+        </div>
+        <button type='submit'>add list</button>
       </form>
     </div>
   )
-  /*return (
-      <form>
-          <div>
-              list name
-          </div>
-          <input/>
-          <button>add list</button>
-      </form>
-  )*/
 }
 
 export default DefaultView
