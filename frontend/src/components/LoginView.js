@@ -52,7 +52,7 @@ const LoginView = ({ setUser }) => {
   }
 
   return (
-    <div>
+    <div className='view'>
       <h3>{signin ? 'Sign in' : 'Log in'}</h3>
       {!signin && <p>Log in to use todo lists</p>}
 

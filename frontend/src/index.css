@@ -1,0 +1,35 @@
+
+.container {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidepanel view"
+    "footer footer";
+  grid-template-columns: 1fr 5fr;
+  gap: 10px;
+}
+
+.header {
+  grid-area: header;
+  background-color: white;
+  border-bottom: 1px solid;
+  border-color: black;
+}
+
+.sidepanel {
+  grid-area: sidepanel;
+  border-right: 1px solid;
+  border-color: black;
+}
+
+.sidepanel a {
+  text-decoration: none;
+}
+
+.view {
+  grid-area: view;
+}
+
+.footer {
+  grid-area: footer;
+}

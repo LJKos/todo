@@ -11,7 +11,7 @@ const DefaultView = ({ addList }) => {
   }
 
   return (
-    <div>
+    <div className='view'>
       <h3>Add list</h3>
       <form onSubmit={handleAddList}>
         <div>

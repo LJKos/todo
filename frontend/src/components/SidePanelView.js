@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
 
-const SidePanelView = ({ lists, user, setUser, addList, removeList }) => {
+const SidePanelView = ({ lists, user, setUser, setLists, addList, removeList }) => {
   const [name, setName] = useState('')
   let navigate = useNavigate()
 
   const handleLogout = () => {
     window.localStorage.removeItem('user')
     setUser(null)
+    setLists([])
     navigate('/login')
   }
 
@@ -20,28 +21,33 @@ const SidePanelView = ({ lists, user, setUser, addList, removeList }) => {
   }
 
   const handleRemoveList = (id) => {
-    // keep handle function for adding functionality
-    // 'do you want to remove the list?' etc.
+    navigate('/')
+    
     removeList(id)
   }
 
   if (!user) {
-    return null
+    return (
+      <div className='sidepanel'>
+        <p>Log in to create lists</p>
+      </div>
+    )
   }
 
   if (!lists) {
     return (
-      <div>
+      <div className='sidepanel'>
         loading lists...
       </div>
     )
   }
   
   return (
-    <div>
+    <div className='sidepanel'>
       <button onClick={handleLogout}>log out</button>
       <button onClick={() => navigate('/')}>home</button>
       
+      {false &&
       <form onSubmit={handleAddList}>
         <div>
             list name
@@ -52,14 +58,14 @@ const SidePanelView = ({ lists, user, setUser, addList, removeList }) => {
             onChange={({ target }) => setName(target.value)} />
         </div>
         <button type='submit'>add list</button>
-      </form>
+      </form>}
 
-      <ul>
-        {lists.map(list => <li key={list.id}>
-          <Link to={`/${list.name}`}>{list.name}</Link>
-          <button onClick={() => handleRemoveList(list.id)}>remove</button>
-        </li>)}
-      </ul>
+      {lists.map(list => <div key={list.id}>
+        <Link to={`/${list.name}`}>{list.name}</Link>
+        <button onClick={() => handleRemoveList(list.id)}>-</button>
+      </div>)}
+
+      <button onClick={() => navigate('/')}>+</button>
     </div>
   )
 }

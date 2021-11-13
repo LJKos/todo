@@ -97,10 +97,12 @@ const App = () => {
     : {}
 
   return (
-    <div>
-      <h2>Todos</h2>
+    <div className='container'>
+      <div className='header'>
+        <h2>Todos</h2>
+      </div>
 
-      <SidePanelView lists={lists} user={user} setUser={setUser} addList={addList} removeList={removeList} />
+      <SidePanelView lists={lists} user={user} setUser={setUser} setLists={setLists} addList={addList} removeList={removeList} />
 
       <Routes>
         <Route path='/login' element={<LoginView setUser={setUser} />} />

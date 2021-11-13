@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const ListView = ({ list, addTodo, removeTodo }) => {
+  const [showTodoForm, setShowTodoForm] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [status, setStatus] = useState('')
@@ -11,6 +12,8 @@ const ListView = ({ list, addTodo, removeTodo }) => {
     event.preventDefault()
 
     addTodo(list.id, { name, description, status, deadline })
+
+    setShowTodoForm(false)
     setName('')
     setDescription('')
     setStatus('')
@@ -25,16 +28,17 @@ const ListView = ({ list, addTodo, removeTodo }) => {
 
   if (!list) {
     return (
-      <div>
+      <div className='view'>
         loading list...
       </div>
     )
   }
 
   return (
-    <div>
+    <div className='view'>
       <h4>{list.name}</h4>
 
+      {showTodoForm &&
       <form onSubmit={handleAddTodo}>
         <div>
           name
@@ -69,11 +73,12 @@ const ListView = ({ list, addTodo, removeTodo }) => {
             onChange={({ target }) => setDeadline(target.value)} />
         </div>
         <button type='submit'>add</button>
-      </form>
+      </form>}
+      <button onClick={() => setShowTodoForm(!showTodoForm)}>{showTodoForm ? 'cancel' : 'add todo'}</button>
 
       {list.todos.map(todo => <div key={todo.id}>
         <Link to={`/${list.name}/${todo.id}`}>{todo.name}</Link>
-        <p>{todo.deadline} {todo.status}</p>
+        <p>{todo.deadline} { todo.status ? 'done' : 'not done' }</p>
         <button onClick={() => handleRemoveTodo(todo.id)}>remove</button>
       </div>)}
     </div>
