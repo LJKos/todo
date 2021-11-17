@@ -1,29 +1,47 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-const ListView = ({ list, addTodo, removeTodo }) => {
+const ListView = ({ list, addTodo, removeTodo, removeList }) => {
+  const navigate = useNavigate()
   const [showTodoForm, setShowTodoForm] = useState(false)
+  const [filter, setFilter] = useState('all')
+
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [status, setStatus] = useState('')
-  const [deadline, setDeadline] = useState('')
+  const [deadline, setDeadline] = useState(new Date().toISOString().substring(0, 10))
 
   const handleAddTodo = (event) => {
     event.preventDefault()
 
-    addTodo(list.id, { name, description, status, deadline })
+    addTodo(list.id, { name, description, status: false, deadline })
 
     setShowTodoForm(false)
     setName('')
     setDescription('')
-    setStatus('')
-    setDeadline('')
+    setDeadline(new Date().toISOString().substring(0, 10))
   }
 
-  const handleRemoveTodo = (id) => {
-    // keep handle function for adding functionality
-    // 'do you want to remove the todo?' etc.
-    removeTodo(list.id, id)
+  const handleRemoveTodo = (todo) => {
+    if (window.confirm(`Do you want to remove ${todo.name}?`)) {
+      removeTodo(list.id, todo.id)
+    }
+  }
+
+  const handleRemoveList = (list) => {
+    if (window.confirm(`Do you want to remove ${list.name}?`)) {
+      navigate('/')
+      removeList(list.id)
+    }
+  }
+
+  const handleChangeFilter = () => {
+    if (filter === 'all') {
+      setFilter('not done')
+    } else if (filter === 'not done') {
+      setFilter('done')
+    } else {
+      setFilter('all')
+    }
   }
 
   if (!list) {
@@ -36,38 +54,31 @@ const ListView = ({ list, addTodo, removeTodo }) => {
 
   return (
     <div className='view'>
-      <h4>{list.name}</h4>
+      <h4>
+        {list.name}
+        <button onClick={() => handleRemoveList(list)}>remove this list</button>
+      </h4>
 
       {showTodoForm &&
       <form onSubmit={handleAddTodo}>
         <div>
-          name
           <input
             type='text'
+            placeholder='name'
             value={name}
             name='name'
             onChange={({ target }) => setName(target.value)} />
         </div>
         <div>
-          description
-          <input
-            type='text'
+          <textarea
+            placeholder='description (optional)'
             value={description}
             name='description'
-            onChange={({ target }) => setDescription(target.value)} />
+            onChange={({ target }) => setDescription(target.value)}></textarea>
         </div>
         <div>
-          status
           <input
-            type='text'
-            value={status}
-            name='status'
-            onChange={({ target }) => setStatus(target.value)} />
-        </div>
-        <div>
-          deadline (yyyy-mm-dd or yyyy-mm-ddThh:mm:ss)
-          <input
-            type='text'
+            type='date'
             value={deadline}
             name='deadline'
             onChange={({ target }) => setDeadline(target.value)} />
@@ -76,11 +87,25 @@ const ListView = ({ list, addTodo, removeTodo }) => {
       </form>}
       <button onClick={() => setShowTodoForm(!showTodoForm)}>{showTodoForm ? 'cancel' : 'add todo'}</button>
 
-      {list.todos.map(todo => <div key={todo.id}>
-        <Link to={`/${list.name}/${todo.id}`}>{todo.name}</Link>
-        <p>{todo.deadline} { todo.status ? 'done' : 'not done' }</p>
-        <button onClick={() => handleRemoveTodo(todo.id)}>remove</button>
-      </div>)}
+      {!showTodoForm &&
+      <div className='list'>
+        <button onClick={() => handleChangeFilter()}>{filter}</button>
+
+        {list.todos
+          .filter(todo =>
+            filter === 'done'
+              ? todo.status
+              : filter === 'not done'
+                ? !todo.status
+                : true
+          )
+          .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())
+          .map(todo => <div className='link' key={todo.id}>
+          <Link to={`/${list.name}/${todo.id}`}>{todo.name}</Link>
+          <button name='remove' onClick={() => handleRemoveTodo(todo)}>remove</button>
+          <p>{new Date(todo.deadline).toDateString()} { todo.status ? '✔' : '✖' }</p>
+        </div>)}
+      </div>}
     </div>
   )
 }

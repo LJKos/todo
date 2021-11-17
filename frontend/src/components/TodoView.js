@@ -1,8 +1,16 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
-const TodoView = ({ todo }) => {
-  const navigate = useNavigate()
+const TodoView = ({ todo, editTodo }) => {
+  const params = useParams()
+
+  const handleEditTodo = () => {
+    const changedTodo = {
+      status: !todo.status
+    }
+
+    editTodo(todo.id, changedTodo)
+  }
 
   if (!todo) {
     return (
@@ -11,14 +19,17 @@ const TodoView = ({ todo }) => {
       </div>
     )
   }
-  
+
   return (
     <div className='view'>
-      <button onClick={() => navigate(-1)}>{'<'}</button>
-      <h3>{todo.name}</h3>
-      <p>{todo.deadline}</p>
-      <p>{todo.description}</p>
-      <div>done<input type='checkbox' checked={todo.status} /></div>
+      <div className='link'>
+        <Link to={`/${params.list}`}>{`< ${params.list}`}</Link>
+      </div>
+
+      <h4>{todo.name}</h4>
+      <div>{todo.description}</div>
+      <div>{new Date(todo.deadline).toDateString()}</div>
+      <div>done <input type='checkbox' defaultChecked={todo.status} onChange={() => handleEditTodo()} /></div>
     </div>
   )
 }

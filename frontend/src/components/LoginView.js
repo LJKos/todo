@@ -4,7 +4,7 @@ import loginService from '../services/login'
 import todoService from '../services/todos'
 
 const LoginView = ({ setUser }) => {
-  const [signin, setSignin] = useState(false)
+  const [signup, setSignup] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -30,11 +30,11 @@ const LoginView = ({ setUser }) => {
 
       navigate('/')
     } catch (exception) {
-      console.log('login failed')
+      window.alert('Log in failed!')
     }
   }
 
-  const handleSignin = async (event) => {
+  const handleSignup = async (event) => {
     event.preventDefault()
 
     try {
@@ -47,16 +47,15 @@ const LoginView = ({ setUser }) => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.log('signin failed')
+      window.alert('Sign in failed: try another username.')
     }
   }
 
   return (
     <div className='view'>
-      <h3>{signin ? 'Sign in' : 'Log in'}</h3>
-      {!signin && <p>Log in to use todo lists</p>}
+      <h3>{signup ? 'Sign up' : 'Log in'}</h3>
 
-      <form onSubmit={signin ? handleSignin : handleLogin}>
+      <form onSubmit={signup ? handleSignup : handleLogin}>
         <div>
           username
           <input
@@ -73,10 +72,11 @@ const LoginView = ({ setUser }) => {
           name='password'
           onChange={({ target }) => setPassword(target.value)} />
         </div>
-        <button type='submit'>{signin ? 'sign in' : 'log in'}</button>
+        <button type='submit'>{signup ? 'sign up' : 'log in'}</button>
       </form>
 
-      <button onClick={() => setSignin(!signin)}>{signin ? 'login' : 'sign-in'}</button>
+      {!signup && <p>Create username and password</p>}
+      <button onClick={() => setSignup(!signup)}>{signup ? 'back' : 'create profile'}</button>
     </div>
   )
 }

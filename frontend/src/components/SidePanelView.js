@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
 
-const SidePanelView = ({ lists, user, setUser, setLists, addList, removeList }) => {
+const SidePanelView = ({ lists, user, setUser, setLists, addList }) => {
   const [name, setName] = useState('')
   let navigate = useNavigate()
 
@@ -18,12 +18,6 @@ const SidePanelView = ({ lists, user, setUser, setLists, addList, removeList }) 
 
     addList(name)
     setName('')
-  }
-
-  const handleRemoveList = (id) => {
-    navigate('/')
-    
-    removeList(id)
   }
 
   if (!user) {
@@ -60,9 +54,8 @@ const SidePanelView = ({ lists, user, setUser, setLists, addList, removeList }) 
         <button type='submit'>add list</button>
       </form>}
 
-      {lists.map(list => <div key={list.id}>
+      {lists.map(list => <div className='link' key={list.id}>
         <Link to={`/${list.name}`}>{list.name}</Link>
-        <button onClick={() => handleRemoveList(list.id)}>-</button>
       </div>)}
 
       <button onClick={() => navigate('/')}>+</button>

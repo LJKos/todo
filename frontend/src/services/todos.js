@@ -21,7 +21,7 @@ const addList = async (list) => {
     headers: { Authorization: bearer }
   }
 
-  const response = await axios.put(baseUrl, list, config)
+  const response = await axios.post(baseUrl, list, config)
   return response.data
 }
 
@@ -39,7 +39,7 @@ const addTodo = async (listId, todo) => {
     headers: { Authorization: bearer }
   }
 
-  const response = await axios.put(`${baseUrl}/${listId}`, todo, config)
+  const response = await axios.post(`${baseUrl}/${listId}`, todo, config)
   return response.data
 }
 
@@ -52,5 +52,14 @@ const removeTodo = async (listId, todoId) => {
   return response.data
 }
 
+const editTodo = async (todoId, todo) => {
+  const config = {
+    headers: { Authorization: bearer }
+  }
+
+  const response = await axios.put(`${baseUrl}/${todoId}`, todo, config)
+  return response.data
+}
+
 // eslint-disable-next-line
-export default { setToken, getTodoLists, addList, removeList, addTodo, removeTodo }
+export default { setToken, getTodoLists, addList, removeList, addTodo, removeTodo, editTodo }

@@ -19,7 +19,7 @@ const App = () => {
       todoService
         .getTodoLists()
         .then(todolists => {
-          setLists(todolists.lists)
+          setLists(todolists)
         })
     }
   }, [user])
@@ -31,7 +31,7 @@ const App = () => {
       setUser(user)
       todoService.setToken(user.token)
     } else {
-      navigate('/login')
+      navigate('/login', { replace: true })
     }
     // eslint-disable-next-line
   }, [])
@@ -46,41 +46,64 @@ const App = () => {
 
       todoService
         .addList(newList)
-        .then(lists => {
-          setLists(lists)
+        .then(list => {
+          setLists(lists.concat(list))
         })
+        .catch(() => {
+          window.alert('Try different name. Must be at least one character.')
+        })
+    } else {
+      window.alert(`List ${name} already exists!`)
     }
   }
 
   const removeList = (id) => {
     todoService
       .removeList(id)
-      .then(lists => {
-        setLists(lists)
+      .then(() => {
+        setLists(lists.filter(list => list.id !== id))
       })
   }
 
   const addTodo = (listId, todo) => {
     const deadline = new Date(todo.deadline)
-    if (deadline) {
-      const newTodo = {
-        ...todo,
-        deadline: deadline
-      }
-
-      todoService
-        .addTodo(listId, newTodo)
-        .then(lists => {
-          setLists(lists)
-        })
+    const newTodo = {
+      ...todo,
+      deadline: deadline
     }
+
+    todoService
+      .addTodo(listId, newTodo)
+      .then(returnedTodo => {
+        const updatedLists = lists.map(list => list.id === listId
+          ? { ...list, todos: list.todos.concat(returnedTodo) }
+          : list)
+        setLists(updatedLists)
+      })
+      .catch(() => {
+        window.alert('Todo must contain name and deadline in correct format.')
+      })
   }
 
   const removeTodo = (listId, todoId) => {
     todoService
       .removeTodo(listId, todoId)
-      .then(lists => {
-        setLists(lists)
+      .then(() => {
+        const updatedLists = lists.map(list => list.id === listId
+          ? { ...list, todos: list.todos.filter(todo => todo.id !== todoId) }
+          : list)
+        setLists(updatedLists)
+      })
+  }
+
+  const editTodo = (todoId, changedTodo) => {
+    todoService
+      .editTodo(todoId, changedTodo)
+      .then(updatedTodo => {
+        const updatedLists = lists.map(list => list.id === updatedTodo.list
+          ? { ...list, todos: list.todos.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo) }
+          : list)
+        setLists(updatedLists)
       })
   }
 
@@ -91,25 +114,27 @@ const App = () => {
     ? lists.find(list => list.name === matchList.params.list)
     : []
   
-  const todo = matchTodo
+  const todo = matchTodo && lists && lists.length > 0
     ? lists.find(list => list.name === matchTodo.params.list)
         .todos.find(todo => todo.id === matchTodo.params.id)
     : {}
 
   return (
-    <div className='container'>
+    <div>
       <div className='header'>
         <h2>Todos</h2>
       </div>
 
-      <SidePanelView lists={lists} user={user} setUser={setUser} setLists={setLists} addList={addList} removeList={removeList} />
+      <div className='container'>
+        <SidePanelView lists={lists} user={user} setUser={setUser} setLists={setLists} addList={addList} />
 
-      <Routes>
-        <Route path='/login' element={<LoginView setUser={setUser} />} />
-        <Route path='/:list/:id' element={<TodoView todo={todo} />} />
-        <Route path='/:list' element={<ListView list={list} addTodo={addTodo} removeTodo={removeTodo} />} />
-        <Route path='/' element={<DefaultView addList={addList} />} />
-      </Routes>
+        <Routes>
+          <Route path='/login' element={<LoginView setUser={setUser} />} />
+          <Route path='/:list/:id' element={<TodoView todo={todo} editTodo={editTodo} />} />
+          <Route path='/:list' element={<ListView list={list} addTodo={addTodo} removeTodo={removeTodo} removeList={removeList} />} />
+          <Route path='/' element={<DefaultView addList={addList} />} />
+        </Routes>
+      </div>
     </div>
   )
 }
