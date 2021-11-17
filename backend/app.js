@@ -2,6 +2,7 @@ const config = require('./utils/config')
 const express = require('express')
 require('express-async-errors')
 const app = express()
+const history = require('connect-history-api-fallback')
 const cors = require('cors')
 const todosRouter = require('./controllers/todos')
 const usersRouter = require('./controllers/users')
@@ -22,6 +23,8 @@ app.use(cors())
 if (config.NODE_ENV === 'production') {
   app.use(middleware.httpsRedirect)
 }
+
+app.use(history())
 
 app.use(express.static('build'))
 app.use(express.json())
