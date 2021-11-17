@@ -4,7 +4,7 @@ const todoSchema = new mongoose.Schema({
   deadline: Date,
   name: String,
   description: String,
-  status: String
+  status: Boolean
 })
 
 const listSchema = new mongoose.Schema({
