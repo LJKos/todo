@@ -18,6 +18,11 @@ mongoose.connect(config.MONGODB_URI)
   })
 
 app.use(cors())
+
+if (config.NODE_ENV === 'production') {
+  app.use(middleware.httpsRedirect)
+}
+
 app.use(express.static('build'))
 app.use(express.json())
 

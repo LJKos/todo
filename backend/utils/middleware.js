@@ -2,6 +2,14 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
+const httpsRedirect = (request, response, next) => {
+  if (request.header('x-forwarded-proto') !== 'https') {
+    response.redirect(`https://${request.header('host')}${request.url}`)
+  } else {
+    next()
+  }
+}
+
 const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).json({
@@ -24,5 +32,6 @@ const errorHandler = (error, request, response, next) => {
 
 module.exports = {
   unknownEndpoint,
+  httpsRedirect,
   errorHandler
 }
