@@ -28,7 +28,7 @@ const LoginView = ({ setUser }) => {
       setUsername('')
       setPassword('')
 
-      navigate('/')
+      navigate('/', { replace: true })
     } catch (exception) {
       window.alert('Log in failed!')
     }
@@ -38,14 +38,28 @@ const LoginView = ({ setUser }) => {
     event.preventDefault()
 
     try {
-      const user = await loginService.signin({
+      const newUser = await loginService.signin({
         username,
         password
       })
 
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      if (newUser) {
+        const user = await loginService.login({
+          username,
+          password
+        })
+
+        window.localStorage.setItem(
+          'user', JSON.stringify(user)
+        )
+
+        todoService.setToken(user.token)
+        setUser(user)
+        setUsername('')
+        setPassword('')
+
+        navigate('/', { replace: true })
+      }
     } catch (exception) {
       window.alert('Sign in failed: try another username.')
     }
