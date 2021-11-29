@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
-const TodoList = require('../models/todolist')
 
 usersRouter.post('/', async (request, response) => {
   const body = request.body
@@ -15,15 +14,6 @@ usersRouter.post('/', async (request, response) => {
   })
 
   const savedUser = await user.save()
-
-  const initialTodoList = new TodoList({
-    user: savedUser._id,
-    lists: []
-  })
-
-  const savedTodoList = await initialTodoList.save()
-  savedUser.todos = savedTodoList._id
-  await savedUser.save()
 
   response.json(savedUser)
 })

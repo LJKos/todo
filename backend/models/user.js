@@ -7,11 +7,7 @@ const userSchema = new mongoose.Schema({
     minlength: 1,
     unique: true
   },
-  passwordHash: String,
-  todos: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'TodoList'
-  }
+  passwordHash: String
 })
 
 userSchema.plugin(uniqueValidator)
